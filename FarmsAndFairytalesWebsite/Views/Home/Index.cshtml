@@ -2,7 +2,54 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body class="index-page">
+    <div id="title-text" class="text-center">
+        <p>Farms and Fairytales</p>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div id="welcome-message" class="col-md">
+                <h1>Welcome to the Farms And Fairytales official website!</h1>
+                <p>
+                    lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.
+                    lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.
+                    lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.
+                    lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.
+                </p>
+            </div>
+            <div id="carousel-image-navigation" class="carousel slide col-md" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <a asp-area="" asp-controller="Home" asp-action="Privacy">
+                            <img src="https://placehold.co/600x400" class="d-block w-100" alt="...">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a asp-area="" asp-controller="Home" asp-action="Privacy">
+                            <img src="https://placehold.co/600x400" class="d-block w-100" alt="...">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a asp-area="" asp-controller="Home" asp-action="Privacy">
+                            <img src="https://placehold.co/600x400" class="d-block w-100" alt="...">
+                        </a>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-image-navigation" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel-image-navigation" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+
