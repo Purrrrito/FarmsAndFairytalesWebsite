@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FarmsAndFairytalesWebsite.Data;
 using FarmsAndFairytalesWebsite.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FarmsAndFairytalesWebsite.Controllers
 {
@@ -44,6 +45,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
         }
 
         // GET: Events/Create
+        [Authorize(Roles = "Photographer")]
         public IActionResult Create()
         {
             return View();
