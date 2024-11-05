@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using FarmsAndFairytalesWebsite.Models;
 
 namespace FarmsAndFairytalesWebsite.Data
 {
@@ -9,5 +10,6 @@ namespace FarmsAndFairytalesWebsite.Data
             : base(options)
         {
         }
+        public DbSet<FarmsAndFairytalesWebsite.Models.Event> Event { get; set; } = default!;
     }
 }
