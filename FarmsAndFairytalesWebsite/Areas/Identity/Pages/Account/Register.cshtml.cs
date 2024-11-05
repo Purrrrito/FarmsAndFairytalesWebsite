@@ -135,7 +135,7 @@ namespace FarmsAndFairytalesWebsite.Areas.Identity.Pages.Account
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     // Assign the photographer role to every account
-                    await _userManager.AddToRoleAsync(user, "PhotographerRole");
+                    await _userManager.AddToRoleAsync(user, "Photographer");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
