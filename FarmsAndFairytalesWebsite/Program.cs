@@ -1,4 +1,5 @@
 using FarmsAndFairytalesWebsite.Data;
+using FarmsAndFairytalesWebsite.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +12,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
 
 var app = builder.Build();
 
@@ -39,5 +42,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+IServiceScope serviceProvider = app.Services.GetRequiredService<IServiceProvider>().CreateScope();
+
+await IdentityHelper.CreateRoles(serviceProvider.ServiceProvider, IdentityHelper.AdminRole, IdentityHelper.PhotographerRole);
 
 app.Run();
