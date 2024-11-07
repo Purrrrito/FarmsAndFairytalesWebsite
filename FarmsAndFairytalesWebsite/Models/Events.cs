@@ -19,5 +19,8 @@ namespace FarmsAndFairytalesWebsite.Models
 
         [Display(Name = "Photographer's name")]
         public string PhotographerHost { get; set; }
+
+        [Display(Name = "Contact information")]
+        public string ContactInfo { get; set; }
     }
 }
