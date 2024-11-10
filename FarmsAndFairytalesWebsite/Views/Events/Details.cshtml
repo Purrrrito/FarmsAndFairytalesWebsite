@@ -8,19 +8,22 @@
     <link rel="stylesheet" href="~/css/events.css" />
 </head>
 
-<h1 class="display-1">@Html.DisplayFor(model => model.EventName)</h1>
+<div class="details-info">
+	<h1 class="display-1">@Html.DisplayFor(model => model.EventName)</h1>
 
-<div>
-    <h4 class="display-4">More about this Event:</h4>
-    <hr />
-    <h5>
-        @Html.DisplayFor(model => model.PhotographerHost) will be hosting this Event, and it will take place on @Html.DisplayFor(model => model.DateOfEvent)
-    </h5>
-    <hr />
-    <p id="event-description">
-        @Html.DisplayFor(model => model.Description)
-    </p>
+	<div>
+		<h4 class="display-4">More about this Event:</h4>
+		<hr />
+		<h5>
+			@Html.DisplayFor(model => model.PhotographerHost) will be hosting this Event, and it will take place on @Html.DisplayFor(model => model.DateOfEvent)
+		</h5>
+		<hr />
+		<p id="event-description">
+			@Html.DisplayFor(model => model.Description)
+		</p>
+	</div>
+	<div class="back-to-index">
+		<a asp-action="Index" class="btn btn-dark">Back to Events</a>
+	</div>
 </div>
-<div>
-    <a asp-action="Index" class="btn btn-dark">Back to Events</a>
-</div>
+

@@ -13,12 +13,7 @@
 
 <h1 id="welcome-text">Upcoming Events!</h1>
 
-@if (SignInManager.IsSignedIn(User))
-{
-    <p> 
-        <a asp-action="Create" class="btn btn-secondary">Create Event</a> 
-    </p>
-}
+
 <div class="table-responsive">
 	<table class="table table-striped table-hover table-bordered">
 		<thead>
@@ -55,5 +50,12 @@
 			}
 		</tbody>
 	</table>
+
+	@if (SignInManager.IsSignedIn(User))
+	{
+		<div class="create-event">
+			<a asp-action="Create" class="btn btn-primary">Create Event</a>
+		</div>
+	}
 </div>
 
