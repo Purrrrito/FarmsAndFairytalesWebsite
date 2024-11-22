@@ -8,17 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using FarmsAndFairytalesWebsite.Data;
 using FarmsAndFairytalesWebsite.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace FarmsAndFairytalesWebsite.Controllers
 {
     public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public EventsController(ApplicationDbContext context)
+		private readonly UserManager<IdentityUser> _userManager;
+		public EventsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
-        }
+			_userManager = userManager;
+		}
 
         // GET: Events
         public async Task<IActionResult> Index()
@@ -56,10 +58,14 @@ namespace FarmsAndFairytalesWebsite.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost")] Event @event)
+        public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event)
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
+                // Assigns the currently logged in photographer to the event
+                @event.Photographer = user;
+
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

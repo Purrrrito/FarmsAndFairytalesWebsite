@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace FarmsAndFairytalesWebsite.Models
 {
@@ -22,5 +23,8 @@ namespace FarmsAndFairytalesWebsite.Models
 
         [Display(Name = "Contact information")]
         public string ContactInfo { get; set; }
-    }
+
+        [Display(Name = "Event created by")]
+		public IdentityUser? Photographer { get; set; }
+	}
 }
