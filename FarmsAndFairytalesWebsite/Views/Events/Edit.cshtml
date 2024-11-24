@@ -1,12 +1,7 @@
 ﻿@model FarmsAndFairytalesWebsite.Models.Event
 
-@{
-    ViewData["Title"] = "Edit";
-}
 
-<h1>Edit</h1>
-
-<h4>Event</h4>
+<h1>Edit: @Model.EventName</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -34,6 +29,11 @@
                 <span asp-validation-for="PhotographerHost" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="ContactInfo" class="control-label"></label>
+                <input asp-for="ContactInfo" class="form-control" />
+                <span asp-validation-for="ContactInfo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -41,7 +41,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+	<a asp-action="Index" class="btn btn-secondary">Back to Events</a>
 </div>
 
 @section Scripts {

@@ -81,12 +81,24 @@ namespace FarmsAndFairytalesWebsite.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Event.FindAsync(id);
-            if (@event == null)
+            // By default EF Core does not automatically load related entitys, so we have use .include to get the related Photographer
+			var @event = await _context.Event
+                .Include(e => e.Photographer)
+                .FirstOrDefaultAsync(e => e.EventId == id);
+
+			if (@event == null)
             {
                 return NotFound();
             }
-            return View(@event);
+
+            // Check to see if the user logged in is the same user that created the event
+			string? currentUserId = _userManager.GetUserId(User);
+			if (currentUserId == null || @event.Photographer?.Id != currentUserId)
+			{
+				return Forbid();
+			}
+
+			return View(@event);
         }
 
         // POST: Events/Edit/5
@@ -94,14 +106,18 @@ namespace FarmsAndFairytalesWebsite.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost")] Event @event)
+        [Authorize (Roles = "Photographer")]
+        public async Task<IActionResult> Edit(int id, [Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event)
         {
             if (id != @event.EventId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+
+
+			if (ModelState.IsValid)
             {
                 try
                 {
