@@ -48,7 +48,6 @@
                         @if (SignInManager.IsSignedIn(User) && await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)) == item.Photographer?.Id) 
                         {
 							<a asp-action="Edit" asp-route-id="@item.EventId" class="btn btn-primary">Edit</a>
-
 						}
 					</td>
 				</tr>

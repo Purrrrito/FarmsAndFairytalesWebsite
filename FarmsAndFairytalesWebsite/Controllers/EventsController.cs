@@ -73,8 +73,9 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View(@event);
         }
 
-        // GET: Events/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+		// GET: Events/Edit/5
+		[Authorize(Roles = "Photographer")]
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -106,16 +107,12 @@ namespace FarmsAndFairytalesWebsite.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize (Roles = "Photographer")]
         public async Task<IActionResult> Edit(int id, [Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event)
         {
             if (id != @event.EventId)
             {
                 return NotFound();
             }
-
-
-
 
 			if (ModelState.IsValid)
             {
@@ -140,17 +137,27 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View(@event);
         }
 
-        // GET: Events/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Events/Delete/5
+		[Authorize(Roles = "Photographer")]
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var @event = await _context.Event
-                .FirstOrDefaultAsync(m => m.EventId == id);
-            if (@event == null)
+			// By default EF Core does not automatically load related entitys, so we have use .include to get the related Photographer
+			var @event = await _context.Event
+				.Include(e => e.Photographer)
+				.FirstOrDefaultAsync(e => e.EventId == id);
+
+			// Check to see if the user logged in is the same user that created the event
+			string? currentUserId = _userManager.GetUserId(User);
+			if (currentUserId == null || @event?.Photographer?.Id != currentUserId)
+			{
+				return Forbid();
+			}
+			if (@event == null)
             {
                 return NotFound();
             }
@@ -161,7 +168,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+		public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @event = await _context.Event.FindAsync(id);
             if (@event != null)
@@ -169,7 +176,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
                 _context.Event.Remove(@event);
             }
 
-            await _context.SaveChangesAsync();
+			await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
