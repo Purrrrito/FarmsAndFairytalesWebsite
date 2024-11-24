@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FarmsAndFairytalesWebsite.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/TitleFont.css" />
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header>
@@ -25,6 +26,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Events" asp-action="Index">Events</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />

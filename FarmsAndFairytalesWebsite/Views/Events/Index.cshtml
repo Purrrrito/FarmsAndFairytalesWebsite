@@ -1,53 +1,65 @@
-﻿@model IEnumerable<FarmsAndFairytalesWebsite.Models.Event>
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<FarmsAndFairytalesWebsite.Models.Event>
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DateOfEvent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhotographerHost)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfEvent)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhotographerHost)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EventId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EventId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.EventId">Delete</a>
-            </td>
-        </tr>
+@section Styles {
+    <link rel="stylesheet" href="~/css/events.css" />
 }
-    </tbody>
-</table>
+
+<h1 id="welcome-text">Upcoming Events!</h1>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DateOfEvent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EventName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PhotographerHost)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.DateOfEvent.ToString("MM/dd/yyyy")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EventName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PhotographerHost)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.EventId" class="btn btn-dark">View</a>
+                        @if (SignInManager.IsSignedIn(User) && await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)) == item.Photographer?.Id) 
+                        {
+							<a asp-action="Edit" asp-route-id="@item.EventId" class="btn btn-primary">Edit</a>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	@if (SignInManager.IsSignedIn(User))
+	{
+		<div class="create-event">
+			<a asp-action="Create" class="btn btn-primary">Create Event</a>
+		</div>
+	}
+</div>
+
