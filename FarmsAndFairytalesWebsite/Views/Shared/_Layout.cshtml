@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/FarmsAndFairytalesWebsite.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/TitleFont.css" />
     @RenderSection("Styles", required: false)
+    @RenderSection("Calendar", required: false)
 </head>
 <body>
     <header>
@@ -30,6 +31,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Events" asp-action="Index">Events</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="Index">Calendar</a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -50,6 +54,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <div id='calendar'></div>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
