@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 // Middleware to parse JSON requests
 app.use(bodyParser.json());
+
+// Enable CORS for all routes
+app.use(cors());
 
 // In-memory storage for booked slots
 let bookedSlots = [];
@@ -27,6 +31,7 @@ app.post('/api/bookSlot', (req, res) => {
 
     // Save the booking
     bookedSlots.push({ title, start, end });
+    console.log('Booking successful:', { title, start, end });
     res.status(200).json({ message: 'Booking successful' });
 });
 
