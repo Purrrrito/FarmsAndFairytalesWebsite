@@ -1,6 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     var indoorCalendarEl = document.getElementById('calendar-indoor');
     var indoorCalendar = new FullCalendar.Calendar(indoorCalendarEl, {
+        timeZone: 'Pacific/ Honolulu',
         initialView: 'timeGridWeek',
         slotDuration: '00:30:00',
         slotLabelInterval: '00:30:00',
@@ -25,70 +26,70 @@
         hiddenDays: [0], // Hide Sunday
         selectable: true,
         allDaySlot: false,
-        events: function (fetchInfo, successCallback, failureCallback) {
-            fetch('http://localhost:3000/api/getBookedSlots')
-                .then(response => response.json())
-                .then(data => {
-                    var events = data.map(slot => ({
-                        title: slot.title,
-                        start: slot.start,
-                        end: slot.end,
-                        backgroundColor: '#FF0000',
-                        borderColor: '#FF0000'
+        eventColor: '#FF0000',
+        events: function (info, successCallback, failureCallback) {
+            $.ajax({
+                url: '/BookedTimeSlots/GetBookedTimeSlots',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+
+                    const events = data.map(slot => ({
+                        start: new Date(slot.start).toISOString(), // Parse to ensure consistency
+                        end: new Date(slot.end).toISOString(),
+                        backgroundColor: slot.color,
+                        borderColor: slot.color
                     }));
+
+                    // Pass the modified events to the successCallback
                     successCallback(events);
-                })
-                .catch(error => {
-                    console.error('Error fetching events:', error);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching events: ", error);
                     failureCallback(error);
-                })
+                }
+            });
         },
         select: function (info) {
-            if (info.start.getDate() !== info.end.getDate()) {
-                alert('You can only select times within the same day.');
+            const duration = (new Date(info.end) - new Date(info.start)) / (1000 * 60);
+            const sameDay = info.start.getDate() === info.end.getDate();
+
+            if (duration <= 30) {
+                alert('Please select at least 30 minutes');
                 indoorCalendar.unselect();
-            } else {
-                const duration = (info.end - info.start) / (1000 * 60);
-                if (duration <= 30) {
-                    alert('Please select a time slot longer than 30 minutes.')
-                    indoorCalendar.unselect();
-                    return;
-                }
-
-                const isConfirmed = confirm(`Are you sure you want to book this time slot?\nDate: ${info.start.toLocaleDateString()}\nTime: ${info.start.toLocaleTimeString()} - ${info.end.toLocaleTimeString()}`);
-                if (isConfirmed) {
-                    const event = {
-                        title: 'Booked',
-                        start: info.start.toISOString(),
-                        end: info.end.toISOString(),
-                        backgroundColor: '#FF0000',
-                        borderColor: '#FF0000',
-                    };
-
-                    fetch('http://localhost:3000/api/bookSlot', { // Changed from https to http
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ title: 'Booked', start: info.start.toISOString(), end: info.end.toISOString() })
-                    }).then(response => {
-                        if (response.ok) {
-                            indoorCalendar.addEvent(event);
-                        } else {
-                            return response.json().then(errorData => {
-                                alert('Failed to save booking. Error: ' + (errorData.error || 'Unknown error'));
-                            });
-                        }
-                    }).catch(error => {
-                        alert('Network error: ' + error.message);
-                    });
-
-                    indoorCalendar.unselect();
-                } else {
-                    indoorCalendar.unselect();
-                }
+                return;
             }
-        },
+            if (!sameDay) {
+                alert('Please select time slots in the same day');
+                indoorCalendar.unselect();
+                return;
+            }
+
+            const offset = -8 * 60; // Offset in minutes for UTC-10:00
+            const start = new Date(info.start.getTime() + offset * 60000).toISOString();
+            const end = new Date(info.end.getTime() + offset * 60000).toISOString();
+
+            console.log("Java script: " , start, end);
+            $.ajax({
+                url: '/BookedTimeSlots/CheckAndBookSlot',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ start, end }),
+                success: function (response) {
+                    if (response.isBooked) {
+                        alert('Time slot is already booked');
+                        indoorCalendar.unselect();
+                    } else {
+                        alert('Time slot booked successfully');
+                        indoorCalendar.refetchEvents();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error booking time slot: ", error);
+                }
+            });
+        }
+
     });
 
     indoorCalendar.render();
