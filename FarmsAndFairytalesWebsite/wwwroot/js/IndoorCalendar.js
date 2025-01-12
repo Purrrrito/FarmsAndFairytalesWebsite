@@ -1,5 +1,8 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    // Get the element for the indoor calendar
     var indoorCalendarEl = document.getElementById('calendar-indoor');
+
+    // Initialize the FullCalendar object
     var indoorCalendar = new FullCalendar.Calendar(indoorCalendarEl, {
         timeZone: 'Pacific/ Honolulu',
         initialView: 'timeGridWeek',
@@ -14,7 +17,7 @@
         slotMaxTime: '18:00:00',
         //Defines business hours are from 10:00 AM to 6:00 PM
         businessHours: {
-            daysOfWeek: [1, 2, 3, 4, 5, 6], // Monday-Saturday
+            daysOfWeek: [1, 2, 3, 4, 5, 6], // Monday to Saturday
             startTime: '10:00', // 10 AM
             endTime: '18:00' // 6 PM
         },
@@ -91,5 +94,6 @@
 
     });
 
+    // Render the calendar
     indoorCalendar.render();
 });
