@@ -20,7 +20,6 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			{
 				start = b.Start.ToString("yyyy-MM-ddTHH:mm:ss"),
 				end = b.End.ToString("yyyy-MM-ddTHH:mm:ss"),
-				color = b.Color
 			}).ToList();
 
 			return Json(bookedTimeSlots);

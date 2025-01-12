@@ -11,9 +11,6 @@ namespace FarmsAndFairytalesWebsite.Models
 		public DateTime Start { get; set; }
 
 		public DateTime End { get; set; }
-
-		[MaxLength(7)] // Hex code length
-		public string Color { get; set; } = "#FF0000"; // Default color is red
 	}
 }
 

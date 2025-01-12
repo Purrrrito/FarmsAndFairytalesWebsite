@@ -9,40 +9,38 @@
             hour: 'numeric',
             minute: '2-digit'
         },
-        minTime: '10:00:00',
-        maxTime: '18:00:00',
+        //Prevents selc ting before 10:00 AM and after 6:00 PM
         slotMinTime: '10:00:00',
         slotMaxTime: '18:00:00',
-        contentHeight: 'auto',
-        validRange: {
-            start: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours out
-            end: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 2 months out
-        },
+        //Defines business hours are from 10:00 AM to 6:00 PM
         businessHours: {
             daysOfWeek: [1, 2, 3, 4, 5, 6], // Monday-Saturday
             startTime: '10:00', // 10 AM
             endTime: '18:00' // 6 PM
         },
+        //How close and far out you can select a time slot
+        validRange: {
+            start: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // 48 hours out
+            end: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(), // 2 months out
+        },
         hiddenDays: [0], // Hide Sunday
         selectable: true,
         allDaySlot: false,
         eventColor: '#FF0000',
+        contentHeight: 'auto',
+        //Fetches booked time slots from the database
         events: function (info, successCallback, failureCallback) {
             $.ajax({
-                url: '/BookedTimeSlots/GetBookedTimeSlots',
+                url: '/BookedTimeSlots/GetBookedTimeSlots', //Uses the method from the controller
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
-
-                    const events = data.map(slot => ({
-                        start: new Date(slot.start).toISOString(), // Parse to ensure consistency
+                    //Maps each slot to the correct event
+                    successCallback(data.map(slot => ({ 
+                        //Ensure start and end time consistency
+                        start: new Date(slot.start).toISOString(), 
                         end: new Date(slot.end).toISOString(),
-                        backgroundColor: slot.color,
-                        borderColor: slot.color
-                    }));
-
-                    // Pass the modified events to the successCallback
-                    successCallback(events);
+                    })));
                 },
                 error: function (xhr, status, error) {
                     console.error("Error fetching events: ", error);
@@ -50,10 +48,13 @@
                 }
             });
         },
-        select: function (info) {
-            const duration = (new Date(info.end) - new Date(info.start)) / (1000 * 60);
-            const sameDay = info.start.getDate() === info.end.getDate();
 
+        //When time slots are selected
+        select: function (info) {
+            const duration = (info.end - info.start) / (1000 * 60); //Calculate duration in minutes
+            const sameDay = info.start.getDate() === info.end.getDate(); // heck if the selection is on the same day
+
+            //Must select more than 30(two time slots) min on the same day    
             if (duration <= 30) {
                 alert('Please select at least 30 minutes');
                 indoorCalendar.unselect();
@@ -65,24 +66,22 @@
                 return;
             }
 
-            const offset = -8 * 60; // Offset in minutes for UTC-10:00
+            const offset = -8 * 60; // Offset in minutes for UTC-10:00 for calendar to function properly
             const start = new Date(info.start.getTime() + offset * 60000).toISOString();
             const end = new Date(info.end.getTime() + offset * 60000).toISOString();
 
-            console.log("Java script: " , start, end);
+            //Send the selected time slots to the controller to check and book
             $.ajax({
-                url: '/BookedTimeSlots/CheckAndBookSlot',
+                url: '/BookedTimeSlots/CheckAndBookSlot', //Uses the method from the controller
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ start, end }),
+                data: JSON.stringify({ start, end }), //Sends the start and end time 
                 success: function (response) {
-                    if (response.isBooked) {
-                        alert('Time slot is already booked');
-                        indoorCalendar.unselect();
-                    } else {
-                        alert('Time slot booked successfully');
+                    alert(response.isBooked ? 'Time slot is already booked' : 'Time slot booked successfully');
+                    if (!response.isBooked) {
                         indoorCalendar.refetchEvents();
                     }
+                    indoorCalendar.unselect();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error booking time slot: ", error);
