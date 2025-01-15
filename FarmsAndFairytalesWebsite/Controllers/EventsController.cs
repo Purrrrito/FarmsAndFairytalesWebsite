@@ -28,7 +28,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View(await _context.Event.ToListAsync());
         }
 
-        // GET: Events/Details/5
+        // GET: Events/Details/*id of selected event*
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -73,7 +73,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View(@event);
         }
 
-		// GET: Events/Edit/5
+		// GET: Events/Edit/*id of selected event*
 		[Authorize(Roles = "Photographer")]
 		public async Task<IActionResult> Edit(int? id)
         {
@@ -102,10 +102,10 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			return View(@event);
         }
 
-        // POST: Events/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+		// POST: Events/Edit/*id of selected event*
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event)
         {
@@ -137,7 +137,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View(@event);
         }
 
-		// GET: Events/Delete/5
+		// GET: Events/Delete/*id of selected event*
 		[Authorize(Roles = "Photographer")]
 		public async Task<IActionResult> Delete(int? id)
         {
@@ -165,8 +165,8 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View(@event);
         }
 
-        // POST: Events/Delete/5
-        [HttpPost, ActionName("Delete")]
+		// POST: Events/Delete/*id of selected event*
+		[HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
         {
