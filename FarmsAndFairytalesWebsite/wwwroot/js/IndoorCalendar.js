@@ -4,7 +4,7 @@
 
     // Initialize the FullCalendar object
     var indoorCalendar = new FullCalendar.Calendar(indoorCalendarEl, {
-        timeZone: 'Pacific/ Honolulu',
+        timeZone: 'America/Los_Angeles',
         initialView: 'timeGridWeek',
         slotDuration: '00:30:00',
         slotLabelInterval: '00:30:00',
@@ -41,8 +41,8 @@
                     //Maps each slot to the correct event
                     successCallback(data.map(slot => ({ 
                         //Ensure start and end time consistency
-                        start: new Date(slot.start).toISOString(), 
-                        end: new Date(slot.end).toISOString(),
+                        start: slot.start, 
+                        end: slot.end,
                     })));
                 },
                 error: function (xhr, status, error) {
@@ -69,9 +69,8 @@
                 return;
             }
 
-            const offset = -8 * 60; // Offset in minutes for UTC-10:00 for calendar to function properly
-            const start = new Date(info.start.getTime() + offset * 60000).toISOString();
-            const end = new Date(info.end.getTime() + offset * 60000).toISOString();
+            const start = new Date(info.start.getTime()).toISOString();
+            const end = new Date(info.end.getTime()).toISOString();
 
             //Send the selected time slots to the controller to check and book
             $.ajax({
