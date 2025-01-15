@@ -29,8 +29,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		public JsonResult CheckAndBookSlot([FromBody] BookedTimeSlots slots)
 		{
 			bool isBooked = _context.BookedTimeSlots.Any(b =>
-				(slots.Start >= b.Start && slots.Start < b.End) ||
-				(slots.End > b.Start && slots.End <= b.End)
+				(slots.Start < b.End && slots.End > b.Start)
 			);
 
 			if (!isBooked)
