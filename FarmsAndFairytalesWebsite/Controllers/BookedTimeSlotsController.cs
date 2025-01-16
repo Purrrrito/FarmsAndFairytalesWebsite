@@ -8,9 +8,11 @@ namespace FarmsAndFairytalesWebsite.Controllers
 	public class BookedTimeSlotsController : Controller
 	{
 		private readonly ApplicationDbContext _context;
-		public BookedTimeSlotsController(ApplicationDbContext context)
+		private readonly UserManager<IdentityUser> _userManager;
+		public BookedTimeSlotsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
 		{
 			_context = context;
+			_userManager = userManager;
 		}
 
 		[HttpGet]
@@ -26,17 +28,20 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult CheckAndBookSlot([FromBody] BookedTimeSlots slots)
+		public async Task<JsonResult> CheckAndBookSlotAsync([FromBody] BookedTimeSlots @slots)
 		{
 			bool isBooked = _context.BookedTimeSlots.Any(b =>
-				(slots.Start < b.End && slots.End > b.Start)
+				(@slots.Start < b.End && @slots.End > b.Start)
 			);
 
 			if (!isBooked)
 			{
-				 Console.WriteLine("Controller" + slots);
-				_context.BookedTimeSlots.Add(slots);
-				_context.SaveChanges();
+				var user = await _userManager.GetUserAsync(User);
+				// Assigns the currently logged in photographer to the event
+				@slots.Photographer = user;
+
+				await _context.BookedTimeSlots.AddAsync(@slots);
+				await _context.SaveChangesAsync();
 			}
 
 			return Json(new { isBooked });

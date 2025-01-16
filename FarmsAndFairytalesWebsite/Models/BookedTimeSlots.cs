@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
 namespace FarmsAndFairytalesWebsite.Models
@@ -11,6 +12,8 @@ namespace FarmsAndFairytalesWebsite.Models
 		public DateTime Start { get; set; }
 
 		public DateTime End { get; set; }
+
+		public IdentityUser? Photographer { get; set; }
 	}
 }
 
