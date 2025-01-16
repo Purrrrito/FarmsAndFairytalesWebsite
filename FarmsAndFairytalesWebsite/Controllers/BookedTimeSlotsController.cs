@@ -28,7 +28,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		}
 
 		[HttpPost]
-		public async Task<JsonResult> CheckAndBookSlotAsync([FromBody] BookedTimeSlots @slots)
+		public async Task<JsonResult> CheckAndBookSlot([FromBody] BookedTimeSlots @slots)
 		{
 			bool isBooked = _context.BookedTimeSlots.Any(b =>
 				(@slots.Start < b.End && @slots.End > b.Start)
@@ -44,7 +44,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 				await _context.SaveChangesAsync();
 			}
 
-			return Json(new { isBooked });
+			return Json(new { isBooked, bookedTimeSlotsId = slots.BookedTimeSlotId });
 		}
 	}
 }

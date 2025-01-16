@@ -55,23 +55,18 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			return View(@timeSlot);
 		}
 
-		[HttpPost, ActionName("Delete")]
+		[HttpPost, ActionName("IndoorBookingConfirmation")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CancelTimeSlot(int id)
+		public async Task<IActionResult> IndoorBookingConfirmation(int id)
 		{
 			var @timeSlot = await _context.BookedTimeSlots.FindAsync(id);
 			if (@timeSlot != null)
 			{
 				_context.BookedTimeSlots.Remove(@timeSlot);
+				await _context.SaveChangesAsync(); 
 			}
 
-			await _context.SaveChangesAsync();
-			return RedirectToAction(nameof(Index));
-		}
-
-		private bool EventExists(int id)
-		{
-			return _context.BookedTimeSlots.Any(e => e.BookedTimeSlotId == id);
+			return RedirectToAction(nameof(Indoor));
 		}
 	}
 }

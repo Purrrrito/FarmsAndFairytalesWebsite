@@ -79,9 +79,11 @@
                 contentType: 'application/json',
                 data: JSON.stringify({ start, end }), //Sends the start and end time 
                 success: function (response) {
-                    alert(response.isBooked ? 'Time slot is already booked' : 'Time slot booked successfully');
-                    if (!response.isBooked) {
-                        indoorCalendar.refetchEvents();
+                    if (response.isBooked) {
+                        alert('Time slot is already booked');
+                    } else {
+                        // Redirect to the IndoorBookingConfirmation view
+                        window.location.href = `/Calendar/IndoorBookingConfirmation?id=${response.bookedTimeSlotsId}&start=${start}&end=${end}`;
                     }
                     indoorCalendar.unselect();
                 },
