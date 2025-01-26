@@ -3,6 +3,9 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" defer></script>
 <script src="~/js/IndoorCalendar.js" asp-append-version="true" defer></script>
 
+<link rel="stylesheet" href="~/css/indoorCalendar.css" />
+}
+
 
 <script>
 
@@ -15,6 +18,17 @@
     });
 
 </script>
-}
+
 
 <div id='calendar-indoor'></div>
+
+<div id="bookingModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Booking Confirmation</h2>
+        <p id="modalText"></p>
+        <button id="confirmBooking">Confirm</button>
+        <button id="cancelBooking">Cancel</button>
+
+    </div>
+</div>
