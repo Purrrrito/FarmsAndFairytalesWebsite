@@ -47,12 +47,19 @@
             const sameDay = info.start.getDate() === info.end.getDate();
 
             if (duration <= 30) {
-                alert('Please select at least 30 minutes');
+                document.getElementById('notificationModalText').innerHTML =
+                    `Please select at least 30 minutes`;
+                const modal = document.getElementById('notificationModal');
+                modal.style.display = 'block';
+
                 indoorCalendar.unselect();
                 return;
             }
             if (!sameDay) {
-                alert('Please select time slots on the same day');
+                document.getElementById('notificationModalText').innerHTML =
+                    `Please select time slots on the same day`;
+                const modal = document.getElementById('notificationModal');
+                modal.style.display = 'block';
                 indoorCalendar.unselect();
                 return;
             }
@@ -68,9 +75,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.isBooked) {
-                        alert('Time slot is already booked');
+                        document.getElementById('notificationModalText').innerHTML =
+                            `Time slot is alerady booked`;
+                        const modal = document.getElementById('notificationModal');
+                        modal.style.display = 'block';
+
                     } else {
-                        document.getElementById('modalText').innerHTML =
+                        document.getElementById('bookingModalText').innerHTML =
                             `You have selected a booking from <strong>${info.start.toLocaleTimeString()}</strong> to <strong>${info.end.toLocaleTimeString()}</strong>.`;
                         const modal = document.getElementById('bookingModal');
                         modal.style.display = 'block';
@@ -81,11 +92,11 @@
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ start, end })
                             })
-                                .then(() => {
-                                    modal.style.display = 'none';
-                                    indoorCalendar.refetchEvents();
-                                })
-                                .catch(error => console.error("Error booking time slot:", error));
+                            .then(() => {
+                                modal.style.display = 'none';
+                                indoorCalendar.refetchEvents();
+                            })
+                            .catch(error => console.error("Error booking time slot:", error));
                         };
 
                         document.getElementById("cancelBooking").onclick = function () {
@@ -100,14 +111,24 @@
 
     indoorCalendar.render();
 
-    document.querySelector(".close").onclick = function () {
+    window.onclick = function (event) {
+        const bookingModal = document.getElementById("bookingModal");
+        const notificationModal = document.getElementById("notificationModal");
+
+        if (event.target === bookingModal) {
+            bookingModal.style.display = "none";
+        }
+
+        if (event.target === notificationModal) {
+            notificationModal.style.display = "none";
+        }
+    };
+
+    document.querySelector("#bookingModal .close").onclick = function () {
         document.getElementById("bookingModal").style.display = "none";
     };
 
-    window.onclick = function (event) {
-        const modal = document.getElementById("bookingModal");
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
+    document.querySelector("#notificationModal .close").onclick = function () {
+        document.getElementById("notificationModal").style.display = "none";
     };
 });
