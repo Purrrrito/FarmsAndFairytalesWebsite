@@ -81,16 +81,20 @@
                         modal.style.display = 'block';
 
                     } else {
+                        document.getElementById("milestoneChecbox").checked = false;
+
                         document.getElementById('bookingModalText').innerHTML =
                             `You have selected a booking from <strong>${info.start.toLocaleTimeString()}</strong> to <strong>${info.end.toLocaleTimeString()}</strong>.`;
                         const modal = document.getElementById('bookingModal');
                         modal.style.display = 'block';
 
                         document.getElementById("confirmBooking").onclick = function () {
+                            const isMilestone = document.getElementById("milestoneChecbox").checked;
+
                             fetch('/BookedTimeSlots/BookSlot', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ start, end })
+                                body: JSON.stringify({ start, end, milestoneShoot: isMilestone })
                             })
                             .then(() => {
                                 modal.style.display = 'none';

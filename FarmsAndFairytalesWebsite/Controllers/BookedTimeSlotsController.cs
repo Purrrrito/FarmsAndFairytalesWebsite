@@ -47,7 +47,8 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			{
 				Start = @slots.Start,
 				End = @slots.End,
-				Photographer = user
+				Photographer = user,
+				MilestoneShoot = slots.MilestoneShoot
 			});
 			await _context.SaveChangesAsync();
 			return Ok();
