@@ -27,7 +27,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			return Json(bookedTimeSlots);
 		}
 
-		public JsonResult CheckSlot([FromBody] BookedTimeSlots @slots)
+		public JsonResult CheckSlot([FromBody] IndoorBookedTimeSlots @slots)
 		{
 			bool isBooked = _context.BookedTimeSlots.Any(b =>
 				(@slots.Start < b.End && @slots.End > b.Start)
@@ -36,14 +36,14 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			return Json(new { isBooked, bookedTimeSlotsId = slots.BookedTimeSlotId });
 		}
 
-		public async Task<IActionResult> BookSlot([FromBody] BookedTimeSlots @slots)
+		public async Task<IActionResult> BookSlot([FromBody] IndoorBookedTimeSlots @slots)
 		{
 			var user = await _userManager.GetUserAsync(User);
 			if (user == null)
 			{
 				return Unauthorized();
 			}
-			_context.BookedTimeSlots.Add(new BookedTimeSlots
+			_context.BookedTimeSlots.Add(new IndoorBookedTimeSlots
 			{
 				Start = @slots.Start,
 				End = @slots.End,

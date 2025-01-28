@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace FarmsAndFairytalesWebsite.Models
 {
-	public class BookedTimeSlots 
+	public class IndoorBookedTimeSlots 
 	{
 		[Key]
 		public int BookedTimeSlotId { get; set; }
@@ -14,8 +14,7 @@ namespace FarmsAndFairytalesWebsite.Models
 		public DateTime End { get; set; }
 
 		public IdentityUser? Photographer { get; set; }
+
+		public bool MilestoneShoot { get; set; }
 	}
 }
-
-
-    
