@@ -48,7 +48,7 @@
 
             if (duration <= 30) {
                 document.getElementById('notificationModalText').innerHTML =
-                    `Please select at least 30 minutes`;
+                    `Please select more than 30 minutes`;
                 const modal = document.getElementById('notificationModal');
                 modal.style.display = 'block';
 
@@ -70,7 +70,10 @@
             fetch('/BookedTimeSlots/CheckSlot', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ start, end })
+                body: JSON.stringify({
+                    IndoorStart: start,
+                    IndoorEnd: end,
+                })
             })
                 .then(response => response.json())
                 .then(data => {
@@ -94,7 +97,11 @@
                             fetch('/BookedTimeSlots/BookSlot', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ start, end, milestoneShoot: isMilestone })
+                                body: JSON.stringify({
+                                    IndoorStart: start,
+                                    IndoorEnd: end,
+                                    IndoorMilestoneCompleted: isMilestone
+                                })
                             })
                             .then(() => {
                                 modal.style.display = 'none';
