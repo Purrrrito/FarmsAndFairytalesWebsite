@@ -7,14 +7,14 @@ namespace FarmsAndFairytalesWebsite.Models
 	public class IndoorBookedTimeSlots 
 	{
 		[Key]
-		public int BookedTimeSlotId { get; set; }
+		public int IndoorBookedTimeSlotId { get; set; }
 
-		public DateTime Start { get; set; }
+		public DateTime IndoorStart { get; set; }
 
-		public DateTime End { get; set; }
+		public DateTime IndoorEnd { get; set; }
 
-		public IdentityUser? Photographer { get; set; }
+		public IdentityUser? IndoorPhotographer { get; set; }
 
-		public bool MilestoneShoot { get; set; }
+		public bool IndoorMilestoneCompleted { get; set; }
 	}
 }

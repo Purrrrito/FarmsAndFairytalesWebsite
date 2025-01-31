@@ -18,10 +18,10 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		[HttpGet]
 		public JsonResult GetBookedTimeSlots()
 		{
-			var bookedTimeSlots = _context.BookedTimeSlots.Select(b => new
+			var bookedTimeSlots = _context.IndoorBookedTimeSlots.Select(b => new
 			{
-				start = b.Start.ToString("yyyy-MM-ddTHH:mm:ss"),
-				end = b.End.ToString("yyyy-MM-ddTHH:mm:ss"),
+				start = b.IndoorStart.ToString("yyyy-MM-ddTHH:mm:ss"),
+				end = b.IndoorEnd.ToString("yyyy-MM-ddTHH:mm:ss"),
 			}).ToList();
 
 			return Json(bookedTimeSlots);
@@ -29,11 +29,11 @@ namespace FarmsAndFairytalesWebsite.Controllers
 
 		public JsonResult CheckSlot([FromBody] IndoorBookedTimeSlots @slots)
 		{
-			bool isBooked = _context.BookedTimeSlots.Any(b =>
-				(@slots.Start < b.End && @slots.End > b.Start)
+			bool isBooked = _context.IndoorBookedTimeSlots.Any(b =>
+				(@slots.IndoorStart < b.IndoorEnd && @slots.IndoorEnd > b.IndoorStart)
 			);
 
-			return Json(new { isBooked, bookedTimeSlotsId = slots.BookedTimeSlotId });
+			return Json(new { isBooked, bookedTimeSlotsId = slots.IndoorBookedTimeSlotId });
 		}
 
 		public async Task<IActionResult> BookSlot([FromBody] IndoorBookedTimeSlots @slots)
@@ -43,12 +43,12 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			{
 				return Unauthorized();
 			}
-			_context.BookedTimeSlots.Add(new IndoorBookedTimeSlots
+			_context.IndoorBookedTimeSlots.Add(new IndoorBookedTimeSlots
 			{
-				Start = @slots.Start,
-				End = @slots.End,
-				Photographer = user,
-				MilestoneShoot = slots.MilestoneShoot
+				IndoorStart = @slots.IndoorStart,
+				IndoorEnd = @slots.IndoorEnd,
+				IndoorPhotographer = user,
+				IndoorMilestoneCompleted = slots.IndoorMilestoneCompleted
 			});
 			await _context.SaveChangesAsync();
 			return Ok();

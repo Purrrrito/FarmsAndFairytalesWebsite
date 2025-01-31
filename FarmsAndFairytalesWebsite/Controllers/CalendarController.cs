@@ -27,46 +27,5 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		{
 			return View();
 		}
-
-		[Authorize(Roles = "Photographer")]
-		public async Task<IActionResult> IndoorBookingConfirmation(int? id, DateTime start, DateTime end)
-		{
-			if (id == null)
-			{
-				return NotFound();
-			}
-
-			// By default EF Core does not automatically load related entitys, so we have use .include to get the related Photographer
-			var @timeSlot = await _context.BookedTimeSlots
-				.Include(e => e.Photographer)
-				.FirstOrDefaultAsync(m => m.BookedTimeSlotId == id);
-			string? currentUserId = _userManager.GetUserId(User);
-
-			// Check to see if the user logged in is the same user that booked this slot
-			if (currentUserId == null || @timeSlot?.Photographer?.Id != currentUserId)
-			{
-				return Forbid();
-			}
-			if (@timeSlot == null)
-			{
-				return NotFound();
-			}
-
-			return View(@timeSlot);
-		}
-
-		[HttpPost, ActionName("IndoorBookingConfirmation")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> IndoorBookingConfirmation(int id)
-		{
-			var @timeSlot = await _context.BookedTimeSlots.FindAsync(id);
-			if (@timeSlot != null)
-			{
-				_context.BookedTimeSlots.Remove(@timeSlot);
-				await _context.SaveChangesAsync(); 
-			}
-
-			return RedirectToAction(nameof(Indoor));
-		}
 	}
 }
