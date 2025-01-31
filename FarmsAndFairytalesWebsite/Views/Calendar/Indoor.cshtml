@@ -1,27 +1,25 @@
 ﻿<h1>Indoor</h1>
-@section Calendar {
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" defer></script>
-<script src="~/js/IndoorCalendar.js" asp-append-version="true" defer></script>
 
-<link rel="stylesheet" href="~/css/indoorCalendar.css" />
+@section Calendar {
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" defer></script>
+    <script src="~/js/IndoorCalendar.js" asp-append-version="true" defer></script>
+    <link rel="stylesheet" href="~/css/indoorCalendar.css" />
 }
 
-
 <script>
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar-indoor');
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth'
-      });
-      calendar.render();
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar-indoor');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth'
+        });
+        calendar.render();
     });
-
 </script>
 
-
+<!-- Calendar Display -->
 <div id='calendar-indoor'></div>
 
+<!-- Booking Confirmation Modal -->
 <div id="bookingModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -33,9 +31,10 @@
         </label>
         <button id="confirmBooking">Confirm</button>
         <button id="cancelBooking">Cancel</button>
-
     </div>
 </div>
+
+<!-- Notification Modal -->
 <div id="notificationModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
