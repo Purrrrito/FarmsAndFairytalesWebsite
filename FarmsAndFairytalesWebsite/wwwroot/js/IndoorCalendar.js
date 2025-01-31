@@ -33,66 +33,106 @@
         contentHeight: 'auto',
         //Fetches booked time slots from the database
         events: function (info, successCallback, failureCallback) {
-            $.ajax({
-                url: '/BookedTimeSlots/GetBookedTimeSlots', //Uses the method from the controller
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    //Maps each slot to the correct event
-                    successCallback(data.map(slot => ({ 
-                        //Ensure start and end time consistency
-                        start: slot.start, 
-                        end: slot.end,
-                    })));
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching events: ", error);
+            fetch('/BookedTimeSlots/GetBookedTimeSlots')
+                .then(response => response.json())
+                .then(data => successCallback(data.map(slot => ({ start: slot.start, end: slot.end }))))
+                .catch(error => {
+                    console.error("Error fetching events:", error);
                     failureCallback(error);
-                }
-            });
+                });
         },
 
-        //When time slots are selected
         select: function (info) {
-            const duration = (info.end - info.start) / (1000 * 60); //Calculate duration in minutes
-            const sameDay = info.start.getDate() === info.end.getDate(); // heck if the selection is on the same day
+            const duration = (info.end - info.start) / (1000 * 60);
+            const sameDay = info.start.getDate() === info.end.getDate();
 
-            //Must select more than 30(two time slots) min on the same day    
             if (duration <= 30) {
-                alert('Please select at least 30 minutes');
+                document.getElementById('notificationModalText').innerHTML =
+                    `Please select at least 30 minutes`;
+                const modal = document.getElementById('notificationModal');
+                modal.style.display = 'block';
+
                 indoorCalendar.unselect();
                 return;
             }
             if (!sameDay) {
-                alert('Please select time slots in the same day');
+                document.getElementById('notificationModalText').innerHTML =
+                    `Please select time slots on the same day`;
+                const modal = document.getElementById('notificationModal');
+                modal.style.display = 'block';
                 indoorCalendar.unselect();
                 return;
             }
 
-            const start = new Date(info.start.getTime()).toISOString();
-            const end = new Date(info.end.getTime()).toISOString();
+            const start = info.start.toISOString();
+            const end = info.end.toISOString();
 
-            //Send the selected time slots to the controller to check and book
-            $.ajax({
-                url: '/BookedTimeSlots/CheckAndBookSlot', //Uses the method from the controller
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ start, end }), //Sends the start and end time 
-                success: function (response) {
-                    alert(response.isBooked ? 'Time slot is already booked' : 'Time slot booked successfully');
-                    if (!response.isBooked) {
-                        indoorCalendar.refetchEvents();
+            fetch('/BookedTimeSlots/CheckSlot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ start, end })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isBooked) {
+                        document.getElementById('notificationModalText').innerHTML =
+                            `Time slot is alerady booked`;
+                        const modal = document.getElementById('notificationModal');
+                        modal.style.display = 'block';
+
+                    } else {
+                        document.getElementById("milestoneChecbox").checked = false;
+
+                        document.getElementById('bookingModalText').innerHTML =
+                            `You have selected a booking from <strong>${info.start.toLocaleTimeString()}</strong> to <strong>${info.end.toLocaleTimeString()}</strong>.`;
+                        const modal = document.getElementById('bookingModal');
+                        modal.style.display = 'block';
+
+                        document.getElementById("confirmBooking").onclick = function () {
+                            const isMilestone = document.getElementById("milestoneChecbox").checked;
+
+                            fetch('/BookedTimeSlots/BookSlot', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ start, end, milestoneShoot: isMilestone })
+                            })
+                            .then(() => {
+                                modal.style.display = 'none';
+                                indoorCalendar.refetchEvents();
+                            })
+                            .catch(error => console.error("Error booking time slot:", error));
+                        };
+
+                        document.getElementById("cancelBooking").onclick = function () {
+                            modal.style.display = 'none';
+                        };
                     }
                     indoorCalendar.unselect();
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error booking time slot: ", error);
-                }
-            });
+                })
+                .catch(error => console.error("Error checking time slot:", error));
         }
-
     });
 
-    // Render the calendar
     indoorCalendar.render();
+
+    window.onclick = function (event) {
+        const bookingModal = document.getElementById("bookingModal");
+        const notificationModal = document.getElementById("notificationModal");
+
+        if (event.target === bookingModal) {
+            bookingModal.style.display = "none";
+        }
+
+        if (event.target === notificationModal) {
+            notificationModal.style.display = "none";
+        }
+    };
+
+    document.querySelector("#bookingModal .close").onclick = function () {
+        document.getElementById("bookingModal").style.display = "none";
+    };
+
+    document.querySelector("#notificationModal .close").onclick = function () {
+        document.getElementById("notificationModal").style.display = "none";
+    };
 });

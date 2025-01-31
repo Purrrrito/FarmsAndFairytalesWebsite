@@ -8,9 +8,11 @@ namespace FarmsAndFairytalesWebsite.Controllers
 	public class BookedTimeSlotsController : Controller
 	{
 		private readonly ApplicationDbContext _context;
-		public BookedTimeSlotsController(ApplicationDbContext context)
+		private readonly UserManager<IdentityUser> _userManager;
+		public BookedTimeSlotsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
 		{
 			_context = context;
+			_userManager = userManager;
 		}
 
 		[HttpGet]
@@ -25,21 +27,31 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			return Json(bookedTimeSlots);
 		}
 
-		[HttpPost]
-		public JsonResult CheckAndBookSlot([FromBody] BookedTimeSlots slots)
+		public JsonResult CheckSlot([FromBody] IndoorBookedTimeSlots @slots)
 		{
 			bool isBooked = _context.BookedTimeSlots.Any(b =>
-				(slots.Start < b.End && slots.End > b.Start)
+				(@slots.Start < b.End && @slots.End > b.Start)
 			);
 
-			if (!isBooked)
-			{
-				 Console.WriteLine("Controller" + slots);
-				_context.BookedTimeSlots.Add(slots);
-				_context.SaveChanges();
-			}
+			return Json(new { isBooked, bookedTimeSlotsId = slots.BookedTimeSlotId });
+		}
 
-			return Json(new { isBooked });
+		public async Task<IActionResult> BookSlot([FromBody] IndoorBookedTimeSlots @slots)
+		{
+			var user = await _userManager.GetUserAsync(User);
+			if (user == null)
+			{
+				return Unauthorized();
+			}
+			_context.BookedTimeSlots.Add(new IndoorBookedTimeSlots
+			{
+				Start = @slots.Start,
+				End = @slots.End,
+				Photographer = user,
+				MilestoneShoot = slots.MilestoneShoot
+			});
+			await _context.SaveChangesAsync();
+			return Ok();
 		}
 	}
 }

@@ -4,6 +4,7 @@ using FarmsAndFairytalesWebsite.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FarmsAndFairytalesWebsite.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250116002016_addedLoggedInUserToBookedTimeSlots")]
+    partial class addedLoggedInUserToBookedTimeSlots
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,30 @@ namespace FarmsAndFairytalesWebsite.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.BookedTimeSlots", b =>
+                {
+                    b.Property<int>("BookedTimeSlotId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookedTimeSlotId"));
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PhotographerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("BookedTimeSlotId");
+
+                    b.HasIndex("PhotographerId");
+
+                    b.ToTable("BookedTimeSlots");
+                });
 
             modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.Event", b =>
                 {
@@ -58,33 +85,6 @@ namespace FarmsAndFairytalesWebsite.Data.Migrations
                     b.HasIndex("PhotographerId");
 
                     b.ToTable("Event");
-                });
-
-            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.IndoorBookedTimeSlots", b =>
-                {
-                    b.Property<int>("BookedTimeSlotId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookedTimeSlotId"));
-
-                    b.Property<DateTime>("End")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("MilestoneShoot")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PhotographerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Start")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("BookedTimeSlotId");
-
-                    b.HasIndex("PhotographerId");
-
-                    b.ToTable("BookedTimeSlots");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -289,7 +289,7 @@ namespace FarmsAndFairytalesWebsite.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.Event", b =>
+            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.BookedTimeSlots", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Photographer")
                         .WithMany()
@@ -298,7 +298,7 @@ namespace FarmsAndFairytalesWebsite.Data.Migrations
                     b.Navigation("Photographer");
                 });
 
-            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.IndoorBookedTimeSlots", b =>
+            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.Event", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Photographer")
                         .WithMany()
