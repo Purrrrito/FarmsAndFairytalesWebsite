@@ -19,18 +19,29 @@
 <!-- Calendar Display -->
 <div id='calendar-indoor'></div>
 
-<!-- Booking Confirmation Modal -->
-<div id="bookingModal" class="modal">
+<!-- Booking Time Confirmation Modal -->
+<div id="bookingTimeModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Booking Confirmation</h2>
-        <p id="bookingModalText"></p>
+        <p id="bookingTimeModalText"></p>
         <label>
             <input type="checkbox" id="milestoneChecbox" />
             Check this box if this is a milestone shoot
         </label>
-        <button id="confirmBooking">Confirm</button>
-        <button id="cancelBooking">Cancel</button>
+        <button id="confirmTimeBooking">Confirm Time</button>
+        <button id="cancelTimeBooking">Cancel</button>
+    </div>
+</div>
+
+<!-- Booking Cost Confirmation Modal -->
+<div id="bookingCostModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Booking Confirmation</h2>
+        <p id="bookingCostModalText"></p>
+        <button id="confirmCostBooking">Confirm Cost</button>
+        <button id="cancelCostBooking">Cancel</button>
     </div>
 </div>
 
