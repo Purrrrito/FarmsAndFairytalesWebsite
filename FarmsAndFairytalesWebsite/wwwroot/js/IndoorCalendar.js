@@ -51,6 +51,9 @@
         select: function (info) {
             const duration = (info.end - info.start) / (1000 * 60);
             const sameDay = info.start.getDate() === info.end.getDate();
+            const start = info.start.toISOString();
+            const end = info.end.toISOString();
+            const slotsSelected = duration / 30;
 
             // Enforce minimum booking duration of 30 minutes
             if (duration <= 30) {
@@ -65,9 +68,6 @@
                 indoorCalendar.unselect();
                 return;
             }
-
-            const start = info.start.toISOString();
-            const end = info.end.toISOString();
 
             // Check if the selected time slot is already booked
             fetch('/BookedTimeSlots/CheckSlot', {
@@ -84,30 +84,40 @@
                         showModal('notificationModal', 'Time slot is already booked');
                     } else {
                         document.getElementById("milestoneChecbox").checked = false;
-                        showModal('bookingModal', `You have selected a booking from <strong>${info.start.toLocaleTimeString()}</strong> to <strong>${info.end.toLocaleTimeString()}</strong>.`);
+                        showModal('bookingTimeModal', `You have selected a booking from <strong>${info.start.toLocaleTimeString()}</strong> to <strong>${info.end.toLocaleTimeString()}</strong>.`);
 
-                        // Confirm booking event
-                        document.getElementById("confirmBooking").onclick = function () {
+                        // Confirm time for booking event
+                        document.getElementById("confirmTimeBooking").onclick = function () {
                             const isMilestone = document.getElementById("milestoneChecbox").checked;
-
-                            fetch('/BookedTimeSlots/BookSlot', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    IndoorStart: start,
-                                    IndoorEnd: end,
-                                    IndoorMilestoneCompleted: isMilestone
-                                })
-                            })
-                            .then(() => {
-                                closeModal('bookingModal');
-                                indoorCalendar.refetchEvents();
-                            })
-                            .catch(error => console.error("Error booking time slot:", error));
+                            closeModal('bookingTimeModal');
+                            if (isMilestone == true) {
+                                showModal('bookingCostModal', `The cost for this milestone indoor booking will be: $${slotsSelected * 65}. At 65 per half-hour.`)
+                            } else {
+                                showModal('bookingCostModal', `The cost for this basic indoor booking will be: $${slotsSelected * 50}. At 50 per half-hour.`)
+                            }
+                            document.getElementById("confirmCostBooking").onclick = function () {
+                                    fetch('/BookedTimeSlots/BookSlot', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            IndoorStart: start,
+                                            IndoorEnd: end,
+                                            IndoorMilestoneCompleted: isMilestone
+                                        })
+                                    })
+                                    .then(() => {
+                                        closeModal('bookingCostModal');
+                                        indoorCalendar.refetchEvents();
+                                    })
+                                    .catch(error => console.error("Error booking time slot:", error));
+                            }
+                            document.getElementById("cancelCostBooking").onclick = function () {
+                                closeModal('bookingCostModal');
+                            };
                         };
 
-                        document.getElementById("cancelBooking").onclick = function () {
-                            closeModal('bookingModal');
+                        document.getElementById("cancelTimeBooking").onclick = function () {
+                            closeModal('bookingTimeModal');
                         };
                     }
                     indoorCalendar.unselect();
