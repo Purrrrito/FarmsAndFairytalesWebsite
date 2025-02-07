@@ -102,7 +102,7 @@
                                         body: JSON.stringify({
                                             IndoorStart: start,
                                             IndoorEnd: end,
-                                            IndoorMilestoneCompleted: isMilestone
+                                            indoorMilestoneShoot: isMilestone
                                         })
                                     })
                                     .then(() => {

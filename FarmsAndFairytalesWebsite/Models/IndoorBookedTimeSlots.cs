@@ -32,8 +32,8 @@ namespace FarmsAndFairytalesWebsite.Models
 		public IdentityUser? IndoorPhotographer { get; set; }
 
 		/// <summary>
-		/// Indicates whether the milestone has been completed during the session.
+		/// Indicates whether the session will be a milestone shoot.
 		/// </summary>
-		public bool IndoorMilestoneCompleted { get; set; }
+		public bool IndoorMilestoneShoot { get; set; }
 	}
 }
