@@ -61,7 +61,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 				IndoorStart = slots.IndoorStart,
 				IndoorEnd = slots.IndoorEnd,
 				IndoorPhotographer = user,
-				IndoorMilestoneCompleted = slots.IndoorMilestoneCompleted
+				IndoorMilestoneShoot = slots.IndoorMilestoneShoot
 			};
 
 			_context.IndoorBookedTimeSlots.Add(newBooking);
