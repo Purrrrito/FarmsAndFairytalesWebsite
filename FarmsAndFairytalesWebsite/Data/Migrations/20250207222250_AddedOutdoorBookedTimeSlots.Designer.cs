@@ -4,6 +4,7 @@ using FarmsAndFairytalesWebsite.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FarmsAndFairytalesWebsite.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250207222250_AddedOutdoorBookedTimeSlots")]
+    partial class AddedOutdoorBookedTimeSlots
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -85,33 +88,6 @@ namespace FarmsAndFairytalesWebsite.Data.Migrations
                     b.HasIndex("IndoorPhotographerId");
 
                     b.ToTable("IndoorBookedTimeSlots");
-                });
-
-            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.OutdoorBookedTimeSlots", b =>
-                {
-                    b.Property<int>("OutdoorBookedTimeSlotId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OutdoorBookedTimeSlotId"));
-
-                    b.Property<bool>("OutdoorBoudoirShoot")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("OutdoorEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OutdoorPhotographerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("OutdoorStart")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("OutdoorBookedTimeSlotId");
-
-                    b.HasIndex("OutdoorPhotographerId");
-
-                    b.ToTable("OutdoorBookedTimeSlots");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -332,15 +308,6 @@ namespace FarmsAndFairytalesWebsite.Data.Migrations
                         .HasForeignKey("IndoorPhotographerId");
 
                     b.Navigation("IndoorPhotographer");
-                });
-
-            modelBuilder.Entity("FarmsAndFairytalesWebsite.Models.OutdoorBookedTimeSlots", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "OutdoorPhotographer")
-                        .WithMany()
-                        .HasForeignKey("OutdoorPhotographerId");
-
-                    b.Navigation("OutdoorPhotographer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
