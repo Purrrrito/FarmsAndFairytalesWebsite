@@ -27,5 +27,11 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		{
 			return View();
 		}
+
+		[Authorize(Roles = "Photographer")]
+		public IActionResult Outdoor()
+		{
+			return View();
+		}
 	}
 }

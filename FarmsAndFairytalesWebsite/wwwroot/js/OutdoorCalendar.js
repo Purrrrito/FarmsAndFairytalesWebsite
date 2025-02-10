@@ -1,9 +1,9 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    // Get the element for the indoor calendar
-    var indoorCalendarEl = document.getElementById('calendar-indoor');
+    // Get the element for the outdoor calendar
+    var outdoorCalendarEl = document.getElementById('calendar-outdoor');
 
     // Initialize the FullCalendar object
-    var indoorCalendar = new FullCalendar.Calendar(indoorCalendarEl, {
+    var outdoorCalendar = new FullCalendar.Calendar(outdoorCalendarEl, {
         timeZone: 'America/Los_Angeles',
         initialView: 'timeGridWeek',
         slotDuration: '00:30:00',
@@ -13,7 +13,7 @@
             minute: '2-digit'
         },
 
-        //Prevents selcting before 10:00 AM and after 6:00 PM
+        //Prevents selecting before 10:00 AM and after 6:00 PM
         slotMinTime: '10:00:00',
         slotMaxTime: '18:00:00',
 
@@ -26,7 +26,7 @@
 
         // Restrict selection to within 48 hours and 2 months from today
         validRange: {
-            start: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // 48 hours out
+            start: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // 48 hours out+
             end: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(), // 2 months out
         },
 
@@ -38,7 +38,7 @@
 
         //Fetches booked time slots from the database
         events: function (info, successCallback, failureCallback) {
-            fetch('/BookedTimeSlots/GetIndoorBookedTimeSlots')
+            fetch('/BookedTimeSlots/GetOutdoorBookedTimeSlots')
                 .then(response => response.json())
                 .then(data => successCallback(data.map(slot => ({ start: slot.start, end: slot.end }))))
                 .catch(error => {
@@ -58,24 +58,24 @@
             // Enforce minimum booking duration of 30 minutes
             if (duration <= 30) {
                 showModal('notificationModal', 'Please select more than 30 minutes');
-                indoorCalendar.unselect();
+                outdoorCalendar.unselect();
                 return;
             }
 
             // Ensure selection stays within the same day
             if (!sameDay) {
                 showModal('notificationModal', 'Please select time slots on the same day');
-                indoorCalendar.unselect();
+                outdoorCalendar.unselect();
                 return;
             }
 
             // Check if the selected time slot is already booked
-            fetch('/BookedTimeSlots/CheckIndoorSlot', {
+            fetch('/BookedTimeSlots/CheckOutdoorSlot', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    IndoorStart: start,
-                    IndoorEnd: end,
+                    OutdoorStart: start,
+                    OutdoorEnd: end,
                 })
             })
                 .then(response => response.json())
@@ -83,31 +83,31 @@
                     if (data.isBooked) {
                         showModal('notificationModal', 'Time slot is already booked');
                     } else {
-                        document.getElementById("milestoneChecbox").checked = false;
+                        document.getElementById("boudoirChecbox").checked = false;
                         showModal('bookingTimeModal', `You have selected a booking from <strong>${info.start.toLocaleTimeString()}</strong> to <strong>${info.end.toLocaleTimeString()}</strong>.`);
 
                         // Confirm time for booking event
                         document.getElementById("confirmTimeBooking").onclick = function () {
-                            const isMilestone = document.getElementById("milestoneChecbox").checked;
+                            const isBoudoir = document.getElementById("boudoirChecbox").checked;
                             closeModal('bookingTimeModal');
-                            if (isMilestone == true) {
-                                showModal('bookingCostModal', `The cost for this milestone indoor booking will be: $${slotsSelected * 65}. At 65 per half-hour.`)
+                            if (isBoudoir == true) {
+                                showModal('bookingCostModal', `The cost for this boudoir outdoor booking will be: $${slotsSelected * 65}. At 65 per half-hour.`)
                             } else {
-                                showModal('bookingCostModal', `The cost for this basic indoor booking will be: $${slotsSelected * 50}. At 50 per half-hour.`)
+                                showModal('bookingCostModal', `The cost for this basic outdoor booking will be: $${slotsSelected * 50}. At 50 per half-hour.`)
                             }
                             document.getElementById("confirmCostBooking").onclick = function () {
-                                    fetch('/BookedTimeSlots/BookIndoorSlot', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({
-                                            IndoorStart: start,
-                                            IndoorEnd: end,
-                                            indoorMilestoneShoot: isMilestone
-                                        })
+                                fetch('/BookedTimeSlots/BookOutdoorSlot', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        OutdoorStart: start,
+                                        OutdoorEnd: end,
+                                        outdoorBoudoirShoot: isBoudoir
                                     })
+                                })
                                     .then(() => {
                                         closeModal('bookingCostModal');
-                                        indoorCalendar.refetchEvents();
+                                        outdoorCalendar.refetchEvents();
                                     })
                                     .catch(error => console.error("Error booking time slot:", error));
                             }
@@ -120,13 +120,13 @@
                             closeModal('bookingTimeModal');
                         };
                     }
-                    indoorCalendar.unselect();
+                    outdoorCalendar.unselect();
                 })
                 .catch(error => console.error("Error checking time slot:", error));
         }
     });
 
-    indoorCalendar.render();
+    outdoorCalendar.render();
 
     // Handle modal clicks (close on outside click)
     window.onclick = function (event) {
