@@ -33,14 +33,14 @@
         hiddenDays: [0], // Hide Sunday
         selectable: true,
         allDaySlot: false,
-        eventColor: '#FF0000',
+        eventColor: '#e45151',
         contentHeight: 'auto',
 
         //Fetches booked time slots from the database
         events: function (info, successCallback, failureCallback) {
             fetch('/BookedTimeSlots/GetIndoorBookedTimeSlots')
                 .then(response => response.json())
-                .then(data => successCallback(data.map(slot => ({ start: slot.start, end: slot.end }))))
+                .then(data => successCallback(data.map(slot => ({ start: slot.start, end: slot.end, title: "Booked" }))))
                 .catch(error => {
                     console.error("Error fetching events:", error);
                     failureCallback(error);
@@ -91,9 +91,9 @@
                             const isMilestone = document.getElementById("milestoneChecbox").checked;
                             closeModal('bookingTimeModal');
                             if (isMilestone == true) {
-                                showModal('bookingCostModal', `The cost for this milestone indoor booking will be: $${slotsSelected * 65}. At 65 per half-hour.`)
+                                showModal('bookingCostModal', `The cost for this milestone indoor booking will be: $${(slotsSelected * 32.5).toFixed(2)} At $32.50 per half-hour.`)
                             } else {
-                                showModal('bookingCostModal', `The cost for this basic indoor booking will be: $${slotsSelected * 50}. At 50 per half-hour.`)
+                                showModal('bookingCostModal', `The cost for this basic indoor booking will be: $${(slotsSelected * 25).toFixed(2)} At $25 per half-hour.`)
                             }
                             document.getElementById("confirmCostBooking").onclick = function () {
                                     fetch('/BookedTimeSlots/BookIndoorSlot', {
@@ -145,7 +145,7 @@
     // Utility function to show a modal
     function showModal(modalId, message) {
         document.getElementById(modalId + 'Text').innerHTML = message;
-        document.getElementById(modalId).style.display = 'block';
+        document.getElementById(modalId).style.display = 'flex';
     }
 
     // Utility function to close a modal

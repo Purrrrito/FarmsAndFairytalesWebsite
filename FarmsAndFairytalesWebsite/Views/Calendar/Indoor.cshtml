@@ -1,4 +1,5 @@
-﻿<h1>Indoor</h1>
+﻿<h1><span class="rounded-title">Indoor</span> <a class="btn btn-secondary" href="/Calendar/Outdoor">Go To Outdoor Calendar</a></h1>
+
 
 @section Calendar {
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" defer></script>
@@ -23,7 +24,7 @@
 <div id="bookingTimeModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Booking Confirmation</h2>
+        <h2>Indoor Booking Confirmation</h2>
         <p id="bookingTimeModalText"></p>
         <label>
             <input type="checkbox" id="milestoneChecbox" />
@@ -38,7 +39,7 @@
 <div id="bookingCostModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Booking Confirmation</h2>
+        <h2>Indoor Booking Confirmation</h2>
         <p id="bookingCostModalText"></p>
         <button id="confirmCostBooking">Confirm Cost</button>
         <button id="cancelCostBooking">Cancel</button>
