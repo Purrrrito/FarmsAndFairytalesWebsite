@@ -24,7 +24,11 @@ namespace FarmsAndFairytalesWebsite.Models
         [Display(Name = "Contact information")]
         public string ContactInfo { get; set; }
 
-        [Display(Name = "Event created by")]
+        public IndoorBookedTimeSlots? IndoorEventTimeSlots { get; set; }
+
+		public OutdoorBookedTimeSlots? OutdoorEventTimeSlots { get; set; }
+
+		[Display(Name = "Event created by")]
 		public IdentityUser? Photographer { get; set; }
 	}
 }

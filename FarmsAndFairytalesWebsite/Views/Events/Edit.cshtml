@@ -1,46 +1,56 @@
 ﻿@model FarmsAndFairytalesWebsite.Models.Event
 
 
-<h1>Edit: @Model.EventName</h1>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+@section Styles {
+    <link rel="stylesheet" href="~/css/events.css" />
+}
+<div class="create-info">
+    <h1>Edit: @Model.EventName</h1>
+    <hr />
+    <div class="form-container">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="EventId" />
+
             <div class="form-group">
                 <label asp-for="DateOfEvent" class="control-label"></label>
                 <input asp-for="DateOfEvent" class="form-control" />
                 <span asp-validation-for="DateOfEvent" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="EventName" class="control-label"></label>
                 <input asp-for="EventName" class="form-control" />
                 <span asp-validation-for="EventName" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="PhotographerHost" class="control-label"></label>
                 <input asp-for="PhotographerHost" class="form-control" />
                 <span asp-validation-for="PhotographerHost" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="ContactInfo" class="control-label"></label>
                 <input asp-for="ContactInfo" class="form-control" />
                 <span asp-validation-for="ContactInfo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" /> |
-                <a asp-action="Index" class="btn btn-secondary">Back to Events</a> |
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to Events</a>
                 <a asp-action="Delete" asp-route-id="@Model.EventId" class="btn btn-danger">Delete</a>
             </div>
         </form>
     </div>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

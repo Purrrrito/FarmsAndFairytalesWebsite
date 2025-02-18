@@ -58,15 +58,40 @@ namespace FarmsAndFairytalesWebsite.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event)
-        {
-            if (ModelState.IsValid)
+		public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event, string EventType)
+		{
+			if (ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(User);
                 // Assigns the currently logged in photographer to the event
                 @event.Photographer = user;
 
-                _context.Add(@event);
+				// Automatically set start and end times for the whole day
+				DateTime startTime = @event.DateOfEvent.Date; // Midnight (00:00)
+				DateTime endTime = startTime.AddDays(1).AddTicks(-1); // 23:59:59
+
+				if (EventType == "Indoor")
+				{
+					@event.IndoorEventTimeSlots = new IndoorBookedTimeSlots
+					{
+						IndoorStart = startTime,
+						IndoorEnd = endTime,
+						IndoorPhotographer = user,
+						IndoorMilestoneShoot = false
+					};
+				}
+				else if (EventType == "Outdoor")
+				{
+					@event.OutdoorEventTimeSlots = new OutdoorBookedTimeSlots
+					{
+						OutdoorStart = startTime,
+						OutdoorEnd = endTime,
+						OutdoorPhotographer = user,
+						OutdoorBoudoirShoot = false
+					};
+				}
+
+				_context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -169,18 +194,34 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		[HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var @event = await _context.Event.FindAsync(id);
-            if (@event != null)
-            {
-                _context.Event.Remove(@event);
-            }
+		{
+			var @event = await _context.Event
+				.Include(e => e.IndoorEventTimeSlots)
+				.Include(e => e.OutdoorEventTimeSlots)
+				.FirstOrDefaultAsync(e => e.EventId == id);
 
-			await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			if (@event != null)
+			{
+				// Remove associated Indoor and Outdoor Time Slots
+				if (@event.IndoorEventTimeSlots != null)
+				{
+					_context.IndoorBookedTimeSlots.Remove(@event.IndoorEventTimeSlots);
+				}
 
-        private bool EventExists(int id)
+				if (@event.OutdoorEventTimeSlots != null)
+				{
+					_context.OutdoorBookedTimeSlots.Remove(@event.OutdoorEventTimeSlots);
+				}
+
+				// Remove the event itself
+				_context.Event.Remove(@event);
+				await _context.SaveChangesAsync();
+			}
+
+			return RedirectToAction(nameof(Index));
+		}
+
+		private bool EventExists(int id)
         {
             return _context.Event.Any(e => e.EventId == id);
         }
