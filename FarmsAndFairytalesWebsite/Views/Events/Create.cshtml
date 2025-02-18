@@ -4,53 +4,70 @@
     ViewData["Title"] = "Create";
 }
 
-<head>
-    <link rel="stylesheet" href="~/css/events.css"/>
-</head>
+@section Styles {
+    <link rel="stylesheet" href="~/css/events.css" />
+}
 
-<h1>Create a new Event</h1>
+<div class="create-info">
+    <h1>Create a new Event</h1>
 
-<h4>Event</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    <div class="form=container">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Date Input -->
             <div class="form-group">
                 <label asp-for="DateOfEvent" class="control-label"></label>
                 <input asp-for="DateOfEvent" class="form-control" />
                 <span asp-validation-for="DateOfEvent" class="text-danger"></span>
             </div>
+
+            <!-- Event Name Input -->
             <div class="form-group">
                 <label asp-for="EventName" class="control-label"></label>
                 <input asp-for="EventName" class="form-control" />
                 <span asp-validation-for="EventName" class="text-danger"></span>
             </div>
+
+            <!-- Description Input -->
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control" rows="5" maxlength="300"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
+            <!-- Photographer Host Input -->
             <div class="form-group">
                 <label asp-for="PhotographerHost" class="control-label"></label>
                 <input asp-for="PhotographerHost" class="form-control" />
                 <span asp-validation-for="PhotographerHost" class="text-danger"></span>
             </div>
+
+            <!-- Contact Info Input -->
             <div class="form-group">
                 <label asp-for="ContactInfo" class="control-label"></label>
                 <input asp-for="ContactInfo" class="form-control" />
                 <span asp-validation-for="ContactInfo" class="text-danger"></span>
             </div>
+
+            <!-- Event Type Selection -->
             <div class="form-group">
+                <label>Event Type</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="EventType" value="Indoor" required /> Indoor</label>
+                    <label><input type="radio" name="EventType" value="Outdoor" required /> Outdoor</label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-buttons">
                 <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to Events</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

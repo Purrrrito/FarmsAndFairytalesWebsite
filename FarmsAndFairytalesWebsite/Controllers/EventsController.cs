@@ -194,18 +194,34 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		[HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var @event = await _context.Event.FindAsync(id);
-            if (@event != null)
-            {
-                _context.Event.Remove(@event);
-            }
+		{
+			var @event = await _context.Event
+				.Include(e => e.IndoorEventTimeSlots)
+				.Include(e => e.OutdoorEventTimeSlots)
+				.FirstOrDefaultAsync(e => e.EventId == id);
 
-			await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			if (@event != null)
+			{
+				// Remove associated Indoor and Outdoor Time Slots
+				if (@event.IndoorEventTimeSlots != null)
+				{
+					_context.IndoorBookedTimeSlots.Remove(@event.IndoorEventTimeSlots);
+				}
 
-        private bool EventExists(int id)
+				if (@event.OutdoorEventTimeSlots != null)
+				{
+					_context.OutdoorBookedTimeSlots.Remove(@event.OutdoorEventTimeSlots);
+				}
+
+				// Remove the event itself
+				_context.Event.Remove(@event);
+				await _context.SaveChangesAsync();
+			}
+
+			return RedirectToAction(nameof(Index));
+		}
+
+		private bool EventExists(int id)
         {
             return _context.Event.Any(e => e.EventId == id);
         }
