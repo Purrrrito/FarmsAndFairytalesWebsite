@@ -1,17 +1,17 @@
 ﻿<h1><span class="rounded-title">Indoor</span> <a class="btn btn-secondary" href="/Calendar/Outdoor">Go To Outdoor Calendar</a></h1>
 
-
 @section Calendar {
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" defer></script>
     <script src="~/js/IndoorCalendar.js" asp-append-version="true" defer></script>
     <link rel="stylesheet" href="~/css/calendar.css" />
+
+    <style>
+        body {
+            background-image: url("../BackgroundImages/FAFIndoorCalendarBackground.jpg");
+        }
+    </style>
 }
 
-<style>
-    body {
-        background-image: url("../BackgroundImages/FAFIndoorCalendarBackground.jpg");
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
