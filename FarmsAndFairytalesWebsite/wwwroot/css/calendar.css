@@ -123,7 +123,7 @@ button:hover {
 }
 
 body {
-    background-size: 80%;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -142,4 +142,13 @@ body {
     border-radius: 20px;
     background-color: #f8f9fa;
     font-weight: bold;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    max-width: 1200px;
 }
