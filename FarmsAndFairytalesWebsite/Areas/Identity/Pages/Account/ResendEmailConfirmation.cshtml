@@ -3,12 +3,17 @@
 @{
     ViewData["Title"] = "Resend email confirmation";
 }
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+}
 
-<h1>@ViewData["Title"]</h1>
-<h2>Enter your email.</h2>
-<hr />
+
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 container">
+        <h1>@ViewData["Title"]</h1>
+        <h2>Enter your email.</h2>
+        <hr />
         <form method="post">
             <div asp-validation-summary="All" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
