@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FarmsAndFairytalesWebsite.Areas.Identity.Pages.Account
@@ -137,10 +138,22 @@ namespace FarmsAndFairytalesWebsite.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    // Assign the photographer role to every account
-                    await _userManager.AddToRoleAsync(user, "Photographer");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+					var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
+					bool adminExists = adminUsers.Any();
+					if (!adminExists)
+					{
+						// Assign Admin role to the first user
+						await _userManager.AddToRoleAsync(user, "Admin");
+					}
+					else
+					{
+						// Assign Photographer role to all new users
+						await _userManager.AddToRoleAsync(user, "Photographer");
+					}
+
+
+					if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
