@@ -11,7 +11,6 @@ namespace FarmsAndFairytalesWebsite.Data
         {
         }
         public DbSet<FarmsAndFairytalesWebsite.Models.Event> Event { get; set; } = default!;
-        public DbSet<FarmsAndFairytalesWebsite.Models.IndoorBookedTimeSlots> IndoorBookedTimeSlots { get; set; } = default!;
-		public DbSet<FarmsAndFairytalesWebsite.Models.OutdoorBookedTimeSlots> OutdoorBookedTimeSlots { get; set; } = default!;
+        public DbSet<FarmsAndFairytalesWebsite.Models.BookedTimeSlots> BookedTimeSlots { get; set; } = default!;
 	}
 }
