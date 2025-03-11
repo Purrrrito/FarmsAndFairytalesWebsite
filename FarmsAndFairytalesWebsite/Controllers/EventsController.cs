@@ -53,50 +53,38 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View();
         }
 
-        // POST: Events/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event, string EventType)
+		// POST: Events/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event, bool IsOutdoor, BookingType Type)
 		{
 			if (ModelState.IsValid)
-            {
-                var user = await _userManager.GetUserAsync(User);
-                // Assigns the currently logged in photographer to the event
-                @event.Photographer = user;
+			{
+				var user = await _userManager.GetUserAsync(User);
+				@event.Photographer = user;
 
 				// Automatically set start and end times for the whole day
-				DateTime startTime = @event.DateOfEvent.Date; // Midnight (00:00)
-				DateTime endTime = startTime.AddDays(1).AddTicks(-1); // 23:59:59
+				DateTime startTime = @event.DateOfEvent.Date;
+				DateTime endTime = startTime.AddDays(1).AddTicks(-1);
 
-				if (EventType == "Indoor")
+				@event.EventTimeSlot = new BookedTimeSlots
 				{
-					@event.IndoorEventTimeSlots = new IndoorBookedTimeSlots
-					{
-						IndoorStart = startTime,
-						IndoorEnd = endTime,
-						IndoorPhotographer = user,
-						IndoorMilestoneShoot = false
-					};
-				}
-				else if (EventType == "Outdoor")
-				{
-					@event.OutdoorEventTimeSlots = new OutdoorBookedTimeSlots
-					{
-						OutdoorStart = startTime,
-						OutdoorEnd = endTime,
-						OutdoorPhotographer = user,
-						OutdoorBoudoirShoot = false
-					};
-				}
+					StartTime = startTime,
+					EndTime = endTime,
+					IsOutdoor = IsOutdoor,
+					Type = Type,
+					Photographer = user
+				};
 
 				_context.Add(@event);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(@event);
-        }
+				await _context.SaveChangesAsync();
+				return RedirectToAction(nameof(Index));
+			}
+			return View(@event);
+		}
+
 
 		// GET: Events/Edit/*id of selected event*
 		[Authorize(Roles = "Photographer")]
@@ -196,21 +184,23 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
 			var @event = await _context.Event
-				.Include(e => e.IndoorEventTimeSlots)
-				.Include(e => e.OutdoorEventTimeSlots)
+				.Include(e => e.EventTimeSlot)
+				.Include(e => e.Photographer)
 				.FirstOrDefaultAsync(e => e.EventId == id);
 
 			if (@event != null)
 			{
-				// Remove associated Indoor and Outdoor Time Slots
-				if (@event.IndoorEventTimeSlots != null)
+				// Ensure the user deleting is the same photographer who created the event
+				string? currentUserId = _userManager.GetUserId(User);
+				if (currentUserId == null || @event.Photographer?.Id != currentUserId)
 				{
-					_context.IndoorBookedTimeSlots.Remove(@event.IndoorEventTimeSlots);
+					return Forbid();
 				}
 
-				if (@event.OutdoorEventTimeSlots != null)
+				// Remove associated time slot
+				if (@event.EventTimeSlot != null)
 				{
-					_context.OutdoorBookedTimeSlots.Remove(@event.OutdoorEventTimeSlots);
+					_context.BookedTimeSlots.Remove(@event.EventTimeSlot);
 				}
 
 				// Remove the event itself

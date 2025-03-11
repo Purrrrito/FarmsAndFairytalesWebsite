@@ -19,16 +19,15 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			_userManager = userManager;
 		}
 
-		// INDOOR METHODS
-
 		/// <summary>
 		/// Retrieves all booked time slots.
 		/// </summary>
 		[HttpGet]
-		public async Task<JsonResult> GetIndoorBookedTimeSlots()
+		public async Task<JsonResult> GetBookedTimeSlots(bool isOutdoor)
 		{
-			var bookedTimeSlots = await _context.IndoorBookedTimeSlots
-				.Select(b => new { start = b.IndoorStart.ToString("yyyy-MM-ddTHH:mm:ss"), end = b.IndoorEnd.ToString("yyyy-MM-ddTHH:mm:ss") })
+			var bookedTimeSlots = await _context.BookedTimeSlots
+				.Where(b => b.IsOutdoor == isOutdoor)
+				.Select(b => new { start = b.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"), end = b.EndTime.ToString("yyyy-MM-ddTHH:mm:ss") })
 				.ToListAsync();
 
 			return Json(bookedTimeSlots);
@@ -38,19 +37,25 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		/// Checks if a requested time slot is already booked.
 		/// </summary>
 		[HttpPost]
-		public async Task<JsonResult> CheckIndoorSlot([FromBody] IndoorBookedTimeSlots slots)
+		public async Task<JsonResult> CheckSlot([FromBody] BookedTimeSlots slots)
 		{
-			bool isBooked = await _context.IndoorBookedTimeSlots
-				.AnyAsync(b => slots.IndoorStart < b.IndoorEnd && slots.IndoorEnd > b.IndoorStart);
+			bool isOutdoor = slots.IsOutdoor; // Assuming `IsOutdoor` exists in the model
 
-			return Json(new { isBooked, bookedTimeSlotsId = slots.IndoorBookedTimeSlotId });
+			bool isBooked = await _context.BookedTimeSlots
+				.AnyAsync(b =>
+					slots.StartTime < b.EndTime &&
+					slots.EndTime > b.StartTime &&
+					(b.IsOutdoor && isOutdoor) // Only block if both bookings are outdoor
+				);
+
+			return Json(new { isBooked, bookedTimeSlotsId = slots.BookedTimeSlotId });
 		}
 
 		/// <summary>
 		/// Books a new time slot if available.
 		/// </summary>
 		[HttpPost]
-		public async Task<IActionResult> BookIndoorSlot([FromBody] IndoorBookedTimeSlots @slots)
+		public async Task<IActionResult> BookSlot([FromBody] BookedTimeSlots slots)
 		{
 			var user = await _userManager.GetUserAsync(User);
 			if (user == null)
@@ -58,69 +63,16 @@ namespace FarmsAndFairytalesWebsite.Controllers
 				return Unauthorized();
 			}
 
-			var newBooking = new IndoorBookedTimeSlots
+			var newBooking = new BookedTimeSlots
 			{
-				IndoorStart = slots.IndoorStart,
-				IndoorEnd = slots.IndoorEnd,
-				IndoorPhotographer = user,
-				IndoorMilestoneShoot = slots.IndoorMilestoneShoot
+				StartTime = slots.StartTime,
+				EndTime = slots.EndTime,
+				IsOutdoor = slots.IsOutdoor,
+				Photographer = user,
+				Type = slots.Type
 			};
 
-			_context.IndoorBookedTimeSlots.Add(newBooking);
-			await _context.SaveChangesAsync();
-
-			return Ok();
-		}
-
-
-		// OUTDOOR METHODS
-
-		/// <summary>
-		/// Retrieves all booked time slots.
-		/// </summary>
-		[HttpGet]
-		public async Task<JsonResult> GetOutdoorBookedTimeSlots()
-		{
-			var bookedTimeSlots = await _context.OutdoorBookedTimeSlots
-				.Select(b => new { start = b.OutdoorStart.ToString("yyyy-MM-ddTHH:mm:ss"), end = b.OutdoorEnd.ToString("yyyy-MM-ddTHH:mm:ss") })
-				.ToListAsync();
-
-			return Json(bookedTimeSlots);
-		}
-
-		/// <summary>
-		/// Checks if a requested time slot is already booked.
-		/// </summary>
-		[HttpPost]
-		public async Task<JsonResult> CheckOutdoorSlot([FromBody] OutdoorBookedTimeSlots slots)
-		{
-			bool isBooked = await _context.OutdoorBookedTimeSlots
-				.AnyAsync(b => slots.OutdoorStart < b.OutdoorEnd && slots.OutdoorEnd > b.OutdoorStart);
-
-			return Json(new { isBooked, bookedTimeSlotsId = slots.OutdoorBookedTimeSlotId });
-		}
-
-		/// <summary>
-		/// Books a new time slot if available.
-		/// </summary>
-		[HttpPost]
-		public async Task<IActionResult> BookOutdoorSlot([FromBody] OutdoorBookedTimeSlots @slots)
-		{
-			var user = await _userManager.GetUserAsync(User);
-			if (user == null)
-			{
-				return Unauthorized();
-			}
-
-			var newBooking = new OutdoorBookedTimeSlots
-			{
-				OutdoorStart = slots.OutdoorStart,
-				OutdoorEnd = slots.OutdoorEnd,
-				OutdoorPhotographer = user,
-				OutdoorBoudoirShoot = slots.OutdoorBoudoirShoot
-			};
-
-			_context.OutdoorBookedTimeSlots.Add(newBooking);
+			_context.BookedTimeSlots.Add(newBooking);
 			await _context.SaveChangesAsync();
 
 			return Ok();

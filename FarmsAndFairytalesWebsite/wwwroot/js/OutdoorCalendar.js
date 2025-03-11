@@ -38,7 +38,7 @@
 
         //Fetches booked time slots from the database
         events: function (info, successCallback, failureCallback) {
-            fetch('/BookedTimeSlots/GetOutdoorBookedTimeSlots')
+            fetch('/BookedTimeSlots/GetBookedTimeSlots?isOutdoor=true')
                 .then(response => response.json())
                 .then(data => successCallback(data.map(slot => ({ start: slot.start, end: slot.end, title: "Booked" }))))
                 .catch(error => {
@@ -70,12 +70,13 @@
             }
 
             // Check if the selected time slot is already booked
-            fetch('/BookedTimeSlots/CheckOutdoorSlot', {
+            fetch('/BookedTimeSlots/CheckSlot', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    OutdoorStart: start,
-                    OutdoorEnd: end,
+                    StartTime: start,
+                    EndTime: end,
+                    isOutdoor: true
                 })
             })
                 .then(response => response.json())
@@ -88,21 +89,22 @@
 
                         // Confirm time for booking event
                         document.getElementById("confirmTimeBooking").onclick = function () {
-                            const isBoudoir = document.getElementById("boudoirChecbox").checked;
+                            const type = document.getElementById("boudoirChecbox").checked ? 3 : 0;
                             closeModal('bookingTimeModal');
-                            if (isBoudoir == true) {
+                            if (type == 3) {
                                 showModal('bookingCostModal', `The cost for this boudoir outdoor booking will be: $${(slotsSelected * 32.5).toFixed(2)} At $32.50 per half-hour.`)
                             } else {
                                 showModal('bookingCostModal', `The cost for this basic outdoor booking will be: $${(slotsSelected * 25).toFixed(2)} At $25 per half-hour.`)
                             }
                             document.getElementById("confirmCostBooking").onclick = function () {
-                                fetch('/BookedTimeSlots/BookOutdoorSlot', {
+                                fetch('/BookedTimeSlots/BookSlot', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
-                                        OutdoorStart: start,
-                                        OutdoorEnd: end,
-                                        outdoorBoudoirShoot: isBoudoir
+                                        StartTime: start,
+                                        EndTime: end,
+                                        IsOutdoor: true,
+                                        Type: type 
                                     })
                                 })
                                     .then(() => {
