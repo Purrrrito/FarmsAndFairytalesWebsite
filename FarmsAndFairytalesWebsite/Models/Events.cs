@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FarmsAndFairytalesWebsite.Data;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmsAndFairytalesWebsite.Models
@@ -25,7 +26,7 @@ namespace FarmsAndFairytalesWebsite.Models
 		public string ContactInfo { get; set; }
 
 		[Display(Name = "Event created by")]
-		public IdentityUser? Photographer { get; set; }
+		public ApplicationUser? Photographer { get; set; }
 
 		public BookedTimeSlots? EventTimeSlot { get; set; } // Now references the new unified model
 	}

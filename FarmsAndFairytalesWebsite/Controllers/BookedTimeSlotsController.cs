@@ -12,8 +12,8 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		/// Controller for handling booked time slots.
 		/// </summary>
 		private readonly ApplicationDbContext _context;
-		private readonly UserManager<IdentityUser> _userManager;
-		public BookedTimeSlotsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+		private readonly UserManager<ApplicationUser> _userManager;
+		public BookedTimeSlotsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
 		{
 			_context = context;
 			_userManager = userManager;
@@ -68,7 +68,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 				StartTime = slots.StartTime,
 				EndTime = slots.EndTime,
 				IsOutdoor = slots.IsOutdoor,
-				Photographer = user,
+				Photographer = (ApplicationUser)user,
 				Type = slots.Type
 			};
 
