@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FarmsAndFairytalesWebsite.Data;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmsAndFairytalesWebsite.Models
@@ -26,6 +27,6 @@ namespace FarmsAndFairytalesWebsite.Models
 
 		public BookingType Type { get; set; } // General, Boudoir, Milestone
 
-		public IdentityUser? Photographer { get; set; }
+		public ApplicationUser? Photographer { get; set; }
 	}
 }
