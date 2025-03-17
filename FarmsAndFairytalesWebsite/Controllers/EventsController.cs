@@ -46,8 +46,8 @@ namespace FarmsAndFairytalesWebsite.Controllers
             return View(@event);
         }
 
-        // GET: Events/Create
-        [Authorize(Roles = "Photographer")]
+		// GET: Events/Create
+		[Authorize(Roles = "Photographer,Admin")]
         public IActionResult Create()
         {
             return View();
@@ -87,7 +87,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 
 
 		// GET: Events/Edit/*id of selected event*
-		[Authorize(Roles = "Photographer")]
+		[Authorize(Roles = "Photographer,Admin")]
 		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -151,7 +151,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
         }
 
 		// GET: Events/Delete/*id of selected event*
-		[Authorize(Roles = "Photographer")]
+		[Authorize(Roles = "Photographer,Admin")]
 		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

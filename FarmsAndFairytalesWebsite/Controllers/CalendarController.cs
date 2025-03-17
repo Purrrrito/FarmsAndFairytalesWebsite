@@ -22,13 +22,13 @@ namespace FarmsAndFairytalesWebsite.Controllers
 			return View();
 		}
 
-		[Authorize(Roles = "Photographer")]
+		[Authorize(Roles = "Photographer,Admin")]
 		public IActionResult Indoor()
 		{
 			return View();
 		}
 
-		[Authorize(Roles = "Photographer")]
+		[Authorize(Roles = "Photographer,Admin")]
 		public IActionResult Outdoor()
 		{
 			return View();
