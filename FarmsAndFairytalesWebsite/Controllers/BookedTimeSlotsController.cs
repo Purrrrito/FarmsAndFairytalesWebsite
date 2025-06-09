@@ -39,13 +39,13 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		[HttpPost]
 		public async Task<JsonResult> CheckSlot([FromBody] BookedTimeSlots slots)
 		{
-			bool isOutdoor = slots.IsOutdoor; // Assuming `IsOutdoor` exists in the model
+			bool isOutdoor = slots.IsOutdoor;
 
 			bool isBooked = await _context.BookedTimeSlots
 				.AnyAsync(b =>
+					b.IsOutdoor == isOutdoor && // Only compare with same type, either indoor or outdoor bookings
 					slots.StartTime < b.EndTime &&
-					slots.EndTime > b.StartTime &&
-					(b.IsOutdoor && isOutdoor) // Only block if both bookings are outdoor
+					slots.EndTime > b.StartTime
 				);
 
 			return Json(new { isBooked, bookedTimeSlotsId = slots.BookedTimeSlotId });
