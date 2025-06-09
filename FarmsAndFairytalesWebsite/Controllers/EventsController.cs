@@ -58,7 +58,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event, bool IsOutdoor, BookingType Type)
+		public async Task<IActionResult> Create([Bind("EventId,DateOfEvent,EventName,Description,PhotographerHost,ContactInfo")] Event @event, bool isOutdoor, BookingType Type)
 		{
 			if (ModelState.IsValid)
 			{
@@ -73,7 +73,7 @@ namespace FarmsAndFairytalesWebsite.Controllers
 				{
 					StartTime = startTime,
 					EndTime = endTime,
-					IsOutdoor = IsOutdoor,
+					IsOutdoor = isOutdoor,
 					Type = Type,
 					Photographer = user
 				};
